@@ -5,10 +5,13 @@ use transmission_rpc::types::{BasicAuth, RpcResponse, TorrentAddArgs, TorrentAdd
 use transmission_rpc::TransClient;
 use transmission_rss::config::{Config, RssList};
 
-async fn process_feed(
-    item: RssList,
-    cfg: Config,
-) -> Result<Vec<String>, Box<dyn Error + Send + Sync>> {
+async fn process_feed(item: RssList, cfg: Config) -> Result<i32, Box<dyn Error + Send + Sync>> {
+    println!("----------------------------");
+    println!("==> Processing [{}]", item.title);
+
+    // Open the database
+    let db = sled::open(&cfg.persistence.path)?;
+
     // Fetch the url
     let content = reqwest::get(item.url).await?.bytes().await?;
     let channel = Channel::read_from(&content[..])?;
@@ -25,33 +28,54 @@ async fn process_feed(
         .items()
         .into_iter()
         .filter(|it| {
-            let mut found = false;
+            // Check if item is already on db
+            let db_found = match db.get(it.link().unwrap()) {
+                Ok(val) => val,
+                Err(_) => None,
+            };
 
-            for filter in item.filters.clone() {
-                if it.title().unwrap_or_default().contains(&filter) {
-                    found = true;
+            if db_found.is_none() {
+                let mut found = false;
+
+                for filter in item.filters.clone() {
+                    if it.title().unwrap_or_default().contains(&filter) {
+                        found = true;
+                    }
                 }
+
+                return found;
             }
 
-            found
+            false
         })
         .collect();
 
-    let mut added: Vec<String> = vec![];
+    let mut count = 0;
     for result in results {
+        let link = result.link().unwrap_or_default().to_string();
         // Add the torrent into transmission
         let add: TorrentAddArgs = TorrentAddArgs {
-            filename: Some(result.link().unwrap_or_default().to_string()),
+            filename: Some(link.clone()),
             download_dir: Some(item.download_dir.clone()),
             ..TorrentAddArgs::default()
         };
         let res: RpcResponse<TorrentAdded> = client.torrent_add(add).await?;
         if res.is_ok() {
-            added.push(result.title().unwrap_or_default().to_string());
+            // Update counter
+            count += 1;
+
+            // Persist the item into the database
+            match db.insert(&link, b"") {
+                Ok(_) => println!("{:?} saved into db!", &link),
+                Err(err) => println!("Failed to save {:?} into db: {:?}", link, err),
+            }
         }
     }
 
-    Ok(added)
+    // Persist changes on disk
+    db.flush()?;
+
+    Ok(count)
 }
 
 #[tokio::main]
@@ -69,8 +93,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     for item in items {
         match item.await {
-            Ok(list) => {
-                println!("{:?} items processed", list.len());
+            Ok(count) => {
+                println!("{:?} items processed", count);
             }
             Err(err) => {
                 println!("{:?}", err);

@@ -2,8 +2,13 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Config {
+    pub persistence: Persistence,
     pub transmission: Transmission,
     pub rss_list: Vec<RssList>,
+}
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct Persistence {
+    pub path: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
