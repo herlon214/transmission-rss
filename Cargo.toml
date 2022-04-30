@@ -16,3 +16,7 @@ toml = "0.5"
 transmission-rpc = "0.3.6"
 sled = "0.34.7"
 clap = { version = "3.1.13", features = ["derive"] }
+
+[profile.release]
+lto = true
+codegen-units = 1
