@@ -5,6 +5,7 @@ version = "0.1.0"
 edition = "2021"
 keywords = ["rss", "transmission", "torrent"]
 categories = ["torrent"]
+license = "MIT"
 
 [dependencies]
 rss = "2.0"
