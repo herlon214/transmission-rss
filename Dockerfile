@@ -34,10 +34,6 @@ RUN strip -s /app/target/x86_64-unknown-linux-musl/release/transmission-rss
 ####################################################################################################
 FROM alpine
 
-# Import from builder.
-COPY --from=builder /etc/passwd /etc/passwd
-COPY --from=builder /etc/group /etc/group
-
 WORKDIR /app
 
 # Copy our build
