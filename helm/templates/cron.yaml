@@ -1,0 +1,24 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: transmission-rss
+spec:
+  schedule: {{ .Values.schedule | quote }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: transmission-rss
+              image: {{ .Values.image.repository}}:{{ .Values.image.tag }}
+              args: ["-c", "/config.toml"]
+              imagePullPolicy: IfNotPresent
+              volumeMounts:
+                - name: config-cm
+                  mountPath: /config.toml
+                  subPath: config.toml
+          volumes:
+            - name: config-cm
+              configMap:
+                name: {{ .Values.configMapName }}
