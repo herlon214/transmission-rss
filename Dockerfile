@@ -1,4 +1,4 @@
-FROM ekidd/rust-musl-builder
+FROM ekidd/rust-musl-builder as builder
 WORKDIR /usr/src
 COPY . .
 ADD --chown=rust:rust . ./
