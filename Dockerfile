@@ -1,9 +1,10 @@
-FROM rust:1.60-stretch as builder
-ENV USER root
-WORKDIR /usr/src/transmission-rss
+FROM ekidd/rust-musl-builder
+WORKDIR /usr/src
 COPY . .
-RUN cargo build --release
+ADD --chown=rust:rust . ./
+
+CMD cargo build --release
 
 FROM scratch
-COPY --from=builder /hello/target/release/transmission-rss /transmission-rss
+COPY --from=builder /usr/src/target/release/transmission-rss /transmission-rss
 CMD ["/transmission-rss"]
