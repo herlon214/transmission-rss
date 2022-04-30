@@ -1,6 +1,7 @@
 use rss::{Channel, Item};
 use std::error::Error;
 use std::fs;
+use clap::Parser;
 use transmission_rpc::types::{BasicAuth, RpcResponse, TorrentAddArgs, TorrentAdded};
 use transmission_rpc::TransClient;
 use transmission_rss::config::{Config, RssList};
@@ -78,10 +79,23 @@ async fn process_feed(item: RssList, cfg: Config) -> Result<i32, Box<dyn Error +
     Ok(count)
 }
 
+/// Parse args
+#[derive(Parser, Debug)]
+#[clap(author, version, about, long_about = None)]
+struct Args {
+    /// Path to the config file
+    #[clap(short, long)]
+    config: String,
+}
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
+
+    // Read env
+    let args = Args::parse();
+
     // Read initial config file
-    let file = fs::read_to_string("config.toml").unwrap();
+    let file = fs::read_to_string(args.config).unwrap();
     let cfg: Config = toml::from_str(&file).unwrap();
 
     let items: Vec<_> = cfg

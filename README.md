@@ -2,6 +2,27 @@
 A simple binary that reads a config file with a list of rss torrent items and adds them
 to transmission.
 
+```
+$ transmission-rss
+USAGE:
+    transmission-rss --config <CONFIG>
+
+OPTIONS:
+    -c, --config <CONFIG>    Path to the config file
+    -h, --help               Print help information
+    -V, --version            Print version information
+                                                        
+```
+
+### Getting started
+
+```
+$ cargo install transmission-rss
+$ transmission-rss -c config.toml
+```
+
+### Config file
+
 Example of `config.toml`:
 
 ```toml
@@ -14,7 +35,7 @@ username = "myusername"
 password = "mypassword"
 
 [[rss_list]]
-title = "Shijou"
+title = "My List"
 url = "https://someweb.site/rss.xml"
 filters = ["1080p"]
 download_dir = "/downloads/my_folder"
