@@ -16,7 +16,7 @@ spec:
               imagePullPolicy: IfNotPresent
               volumeMounts:
                 - name: config-cm
-                  mountPath: /config.toml
+                  mountPath: /
                   subPath: config.toml
           volumes:
             - name: config-cm
