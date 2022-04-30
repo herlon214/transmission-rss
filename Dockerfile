@@ -46,4 +46,4 @@ COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/transmission-r
 # Use an unprivileged user.
 USER transmission-rss:transmission-rss
 
-CMD ["/app/transmission-rss"]
+ENTRYPOINT ["/app/transmission-rss"]
