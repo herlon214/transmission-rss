@@ -24,23 +24,15 @@ WORKDIR /app
 
 COPY ./ .
 
-RUN cargo build --target x86_64-unknown-linux-musl --release
-RUN strip -s /app/target/x86_64-unknown-linux-musl/release/transmission-rss
+RUN cargo install --target x86_64-unknown-linux-musl --path .
 
 
 ####################################################################################################
 ## Final image
 ####################################################################################################
-FROM debian:buster-slim
-
-COPY --from=builder /etc/passwd /etc/passwd
-COPY --from=builder /etc/group /etc/group
-
-WORKDIR /app
+FROM scratch
 
 # Copy our build
-COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/transmission-rss ./
+COPY --from=builder /usr/local/cargo/bin/transmission-rss .
 
-USER transmission-rss:transmission-rss
-
-ENTRYPOINT ["/app/transmission-rss"]
+ENTRYPOINT ["./transmission-rss"]
