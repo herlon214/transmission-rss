@@ -12,12 +12,11 @@ spec:
           containers:
             - name: transmission-rss
               image: {{ .Values.image.repository}}:{{ .Values.image.tag }}
-              args: ["-c", "/config.toml"]
+              args: ["-c", "/app/config.toml"]
               imagePullPolicy: IfNotPresent
               volumeMounts:
                 - name: config-cm
-                  mountPath: /
-                  subPath: config.toml
+                  mountPath: /app
           volumes:
             - name: config-cm
               configMap:

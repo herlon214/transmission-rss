@@ -95,7 +95,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Args::parse();
 
     // Read initial config file
-    let file = fs::read_to_string(args.config).unwrap();
+    let file = match fs::read_to_string(&args.config) {
+        Ok(val) => val,
+        Err(err) => panic!("Failed to find file {:?}: {}", args.config, err),
+    };
     let cfg: Config = toml::from_str(&file).unwrap();
 
     let items: Vec<_> = cfg
