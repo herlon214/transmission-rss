@@ -31,7 +31,7 @@ RUN strip -s /app/target/x86_64-unknown-linux-musl/release/transmission-rss
 ####################################################################################################
 ## Final image
 ####################################################################################################
-FROM alpine
+FROM debian:buster-slim
 
 COPY --from=builder /etc/passwd /etc/passwd
 COPY --from=builder /etc/group /etc/group
