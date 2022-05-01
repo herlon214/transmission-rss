@@ -2,6 +2,6 @@ schedule: "* * * * *"
 image:
   repository: ghcr.io/herlon214/transmission-rss
   pullPolicy: IfNotPresent
-  tag: "v0.1.9"
+  tag: "v0.1.10"
 
 configMapName: transmission-rss-cm
