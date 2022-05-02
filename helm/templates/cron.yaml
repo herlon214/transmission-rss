@@ -17,7 +17,12 @@ spec:
               volumeMounts:
                 - name: config-cm
                   mountPath: /app
+                - mountPath: "/db"
+                  name: persistence
           volumes:
             - name: config-cm
               configMap:
                 name: {{ .Values.configMapName }}
+            - name: persistence
+              persistentVolumeClaim:
+                claimName: transmission-rss
