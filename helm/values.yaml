@@ -1,7 +1,7 @@
-schedule: "*/5 * * * *"
+schedule: "* * * * *"
 image:
   repository: ghcr.io/herlon214/transmission-rss
   pullPolicy: IfNotPresent
-  tag: "v0.1.10"
+  tag: "v0.2.1"
 
 configMapName: transmission-rss-cm

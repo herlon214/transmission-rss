@@ -34,6 +34,10 @@ url = "http://myserver/transmission/rpc"
 username = "myusername"
 password = "mypassword"
 
+[notification.telegram]
+bot_token = 123123:your_token
+chat_id = 926175310
+
 [[rss_list]]
 title = "My List"
 url = "https://someweb.site/rss.xml"
