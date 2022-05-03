@@ -1,4 +1,4 @@
-schedule: "* * * * *"
+schedule: "*/30 * * * *"
 image:
   repository: ghcr.io/herlon214/transmission-rss
   pullPolicy: IfNotPresent
