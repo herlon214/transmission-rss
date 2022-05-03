@@ -29,7 +29,7 @@ impl fmt::Display for Error {
 pub async fn notify_all(cfg: Config, message: String) {
     // Telegram
     if let Some(bot_cfg) = cfg.notification.telegram {
-        let notifier = Telegram::new(bot_cfg.bot_token, bot_cfg.chat_id);
+        let notifier = Telegram::new(bot_cfg.bot_token, bot_cfg.chat_id, "https://api.telegram.org".into());
         match notifier.send(message).await {
             Ok(_) => println!("Telegram notification sent!"),
             Err(err) => println!("Failed to send telegram message: {}", err.to_string()),

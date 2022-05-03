@@ -25,4 +25,4 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: ghcr.io/herlon214/transmission-rss:v0.2.1
+          tags: ghcr.io/herlon214/transmission-rss:v0.2.2
