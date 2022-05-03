@@ -1,7 +1,7 @@
 [package]
 name = "transmission-rss"
 description = "A simple binary to add RSS torrent items to transmission"
-version = "v0.2.2"
+version = "0.2.2"
 edition = "2021"
 keywords = ["rss", "transmission", "torrent"]
 categories = ["command-line-utilities"]
