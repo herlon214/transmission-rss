@@ -1,9 +1,9 @@
+use crate::config::{Config, RssList};
+use crate::notification::notify_all;
 use rss::{Channel, Item};
 use std::error::Error;
 use transmission_rpc::types::{BasicAuth, RpcResponse, TorrentAddArgs, TorrentAdded};
 use transmission_rpc::TransClient;
-use crate::config::{Config, RssList};
-use crate::notification::notify_all;
 
 pub async fn process_feed(item: RssList, cfg: Config) -> Result<i32, Box<dyn Error + Send + Sync>> {
     println!("----------------------------");
@@ -36,6 +36,11 @@ pub async fn process_feed(item: RssList, cfg: Config) -> Result<i32, Box<dyn Err
 
             if db_found.is_none() {
                 let mut found = false;
+
+                // If no filter is set just accept the item
+                if item.filters.len() == 0 {
+                    return true;
+                }
 
                 for filter in item.filters.clone() {
                     if it.title().unwrap_or_default().contains(&filter) {
