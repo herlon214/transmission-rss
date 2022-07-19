@@ -1,5 +1,6 @@
 use crate::config::{Config, RssList};
 use crate::notification::notify_all;
+use log::info;
 use rss::{Channel, Item};
 use std::error::Error;
 use transmission_rpc::types::{BasicAuth, RpcResponse, TorrentAddArgs, TorrentAdded};
@@ -29,7 +30,7 @@ pub async fn process_feed(item: RssList, cfg: Config) -> Result<i32, Box<dyn Err
         .into_iter()
         .filter(|it| {
             // Check if item is already on db
-            let db_found = match db.get(it.link().unwrap()) {
+            let db_found = match db.get(get_link(it)) {
                 Ok(val) => val,
                 Err(_) => None,
             };
@@ -48,6 +49,16 @@ pub async fn process_feed(item: RssList, cfg: Config) -> Result<i32, Box<dyn Err
                     }
                 }
 
+                if !found {
+                    info!(
+                        "Skipping {} as it doesn't match any filter",
+                        it.title
+                            .as_deref()
+                            .or(it.link.as_deref())
+                            .unwrap_or_default()
+                    )
+                }
+
                 return found;
             }
 
@@ -58,10 +69,10 @@ pub async fn process_feed(item: RssList, cfg: Config) -> Result<i32, Box<dyn Err
     let mut count = 0;
     for result in results {
         let title = result.title().unwrap_or_default();
-        let link = result.link().unwrap_or_default().to_string();
+        let link = get_link(result);
         // Add the torrent into transmission
         let add: TorrentAddArgs = TorrentAddArgs {
-            filename: Some(link.clone()),
+            filename: Some(link.to_string()),
             download_dir: Some(item.download_dir.clone()),
             ..TorrentAddArgs::default()
         };
@@ -74,7 +85,7 @@ pub async fn process_feed(item: RssList, cfg: Config) -> Result<i32, Box<dyn Err
             notify_all(cfg.clone(), format!("Downloading: {}", title)).await;
 
             // Persist the item into the database
-            match db.insert(&link, b"") {
+            match db.insert(link, b"") {
                 Ok(_) => println!("{:?} saved into db!", &link),
                 Err(err) => println!("Failed to save {:?} into db: {:?}", link, err),
             }
@@ -85,4 +96,11 @@ pub async fn process_feed(item: RssList, cfg: Config) -> Result<i32, Box<dyn Err
     db.flush()?;
 
     Ok(count)
+}
+
+fn get_link(item: &Item) -> &str {
+    match item.enclosure() {
+        Some(enclosure) if enclosure.mime_type() == "application/x-bittorrent" => enclosure.url(),
+        _ => item.link().unwrap_or_default(),
+    }
 }

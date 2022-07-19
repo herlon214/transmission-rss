@@ -1,6 +1,6 @@
-use std::fs;
 use clap::Parser;
-use transmission_rss::config::{Config};
+use std::fs;
+use transmission_rss::config::Config;
 use transmission_rss::rss::process_feed;
 
 /// Parse args
@@ -14,7 +14,7 @@ struct Args {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-
+    env_logger::init();
     // Read env
     let args = Args::parse();
 
