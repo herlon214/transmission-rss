@@ -18,6 +18,8 @@ sled = "0.34.7"
 clap = { version = "3.1.13", features = ["derive"] }
 openssl = { version = "0.10", features = ["vendored"] }
 serde_json = "1.0"
+log = "0.4.17"
+env_logger = "0.9.0"
 
 [dev-dependencies]
 tokio-test = "0.4.2"

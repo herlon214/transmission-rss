@@ -1,5 +1,6 @@
 use crate::config::{Config, RssList};
 use crate::notification::notify_all;
+use log::info;
 use rss::{Channel, Item};
 use std::error::Error;
 use transmission_rpc::types::{BasicAuth, RpcResponse, TorrentAddArgs, TorrentAdded};
@@ -46,6 +47,16 @@ pub async fn process_feed(item: RssList, cfg: Config) -> Result<i32, Box<dyn Err
                     if it.title().unwrap_or_default().contains(&filter) {
                         found = true;
                     }
+                }
+
+                if !found {
+                    info!(
+                        "Skipping {} as it doesn't match any filter",
+                        it.title
+                            .as_deref()
+                            .or(it.link.as_deref())
+                            .unwrap_or_default()
+                    )
                 }
 
                 return found;
