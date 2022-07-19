@@ -57,6 +57,7 @@ filters = ["1080p"]
 download_dir = "/downloads/my_folder"
 ```
 
+The password and telegram bot token can optionally be loaded from separate files by specifying `password_file`/`bot_token_file` instead.
 
 ### Docker
 It's also possible to run the docker container directly or using `docker-compose.yml`.
